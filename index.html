@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<!-- saved from url=(0067)https://www.inf.ufpr.br/eduardo/ensino/ci218/trabalhos/SQL/SQL.html -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+  <title>CI218 - Sistemas de Bancos de Dados</title>
+</head>
+<body>
+[<a href="https://www.inf.ufpr.br/eduardo/ensino/ci218/index.html">Home</a>]
+<h1>
+<p> Trabalho de SQL</p>
+</h1>
+<hr>
+<h2>Objetivo:</h2>  
+O objetivo deste trabalho  é se familiarizar com a linguagem SQL e serve como nota do trabalho T1 do ERE2.
+O trabalho deverá ser realizado com o SGBD <a href="https://sqlite.org/cli.html">SQLite3</a> que pode ser encontrado facilmente para instalacao em qualquer sistema operacional. Verifique se o seu computador ja possui o SGBD instalado digitando <code>sqlite3</code> no terminal. A mensagem abaixo deve aparecer no seu terminal:
+<pre>$ sqlite3
+SQLite version 3.22.0 2018-01-22 18:45:57
+Enter ".help" for usage hints.
+Connected to a transient in-memory database.
+Use ".open FILENAME" to reopen on a persistent database.
+sqlite&gt; 
+</pre>
+
+<h2>Especificação:</h2>  
+O trabalho possui 8 questões sendo o valor total 2.0 pontos (0.25 cada). Para cada questão voce deverá construir um código SQL para executar no SGBD SQLite. A entrega deverá seguir o formato descrito abaixo. As questões tambem seguem abaixo. 
+
+<h3>Entrega:</h3>
+Este arquivo deve ser enviado por e-mail ao endereço do professor com o assunto "CI218-Trab1" (exatamente). IMPORTANTE: Minha caixa de email usa o assunto do email como filtro.
+
+O trabalho é individual.
+
+<h3>Formato de entrega:</h3> 
+O formato do arquivo será GRR000000.tar.gz contendo a sua matricula enviado para o meu email. Segue abaixo o comando para gerar os arquivos de entrega:
+<pre>$ mkdir GRR000000
+$ cd GRR000000
+$ touch q1_test.sql \
+q2_tipo_pecas.sql \
+q3_segmento_cliente.sql \
+q4_tipo_encomendas.sql \
+q5_qtd_encomendas.sql \
+q6_qtd_itens.sql \
+q7_qtd_itens_maior.sql \
+q8_not_special.sql
+</pre>
+
+<h3>Carregando e verificando o BD:</h3>                                                                                  
+
+Aqui está o <a href="https://www.inf.ufpr.br/eduardo/ensino/ci218/trabalhos/SQL/tpch.db">download</a> do BD <a href="http://www.tpc.org/tpch/default.asp">TPC-H</a> que iremos usar no trabalho ou use o comando:
+<pre>$ wget http://www.inf.ufpr.br/eduardo/ensino/ci218/SQL/tpch.db
+</pre>
+
+Apos baixar o BD, opcionalmente voce podera verificar sua integridade com o seguinte commando (os valores devem ser iguais):
+<pre>$ cksum tpch.db 
+536004849 12226560 tpch.db
+</pre> 
+
+O BD tem tamanho aproximado de 12M e deve ser acessado no SQLite de acordo com o comando abaixo:
+<pre>                                                                                                         
+$ sqlite3 tpch.db
+</pre>   
+
+Voce podera imprimir o esquema do BD com o commando abaixo:
+<pre>                                                                                                         
+sqlite&gt; .tables
+CUSTOMER  LINEITEM  NATION    ORDERS    PART      PARTSUPP  REGION    SUPPLIER
+</pre>   
+
+O BD do TPC-H possui o seguinte esquema relacional:
+<p>
+<img src="./index_files/tpch.png" width="604" height="528">
+</p><p>
+
+Voce podera imprimir o esquema de cada tabela  com o commando .schema. Por exemplo, listamos o esquema da tabela NATION abaixo:
+</p><pre>                                                                                                         
+sqlite&gt; .schema NATION
+CREATE TABLE NATION (
+  N_NATIONKEY INTEGER PRIMARY KEY NOT NULL,
+  N_NAME      TEXT NOT NULL,
+  N_REGIONKEY INTEGER NOT NULL,
+  N_COMMENT   TEXT,
+  FOREIGN KEY (N_REGIONKEY) REFERENCES REGION(R_REGIONKEY)
+);
+</pre>   
+
+A seguir vemos uma linha tabela NATION (note que os atributos são separado por "|"):
+<pre>0|ALGERIA|0|final accounts wake quickly. special reques
+</pre>
+
+<h3>Programando em SQL:</h3>   
+Agora vamos programar em SQL e colocar os programas nos arquivos de entrega. 
+Primeiro faremos um SQL teste pra verificar se a resposta bate com o esperado da avaliacao.
+
+<h4>Q1 Teste:</h4>
+
+<pre>sqlite&gt; select distinct(r_name) from REGION;
+AFRICA
+AMERICA
+ASIA
+EUROPE
+MIDDLE EAST
+</pre> 
+
+LEMBRETE: Voce deve colocar SOMENTE o comando SQL no arquivo "q1_test.sql" SEM os dados. Este arquivo devera ser colocado no subdiretorio com seu GRR (por ex., GRR000000). 
+Nao esqueca que o ";" finaliza o comando SQL.
+
+
+<h4>Q2 Tipos de peças disponiveis:</h4>
+Objetivo: liste os tipos distintos de peça dos produtos (tabela PART).<p>
+Detalhe: mostre somente o tipo distinto de peça sem ordenar os dados.</p><p>
+Arquivo: q2_tipo_pecas.sql</p><p>
+
+</p><h4>Q3 Quantidade de clientes pelo segmento de mercado:</h4>
+Objetivo: Conhecer o mercado da clientela (tabela CUSTOMER).<p>
+Detalhe: mostre o segmento de mercado e conte o numero de clientes para cada segmento. Por ex. uma linha da resposta: </p><pre>AUTOMOBILE|302</pre> <p>
+Arquivo: q3_segmento_cliente.sql</p><p>
+
+</p><h4>Q4 Liste o status das encomendas:</h4>
+Objetivo: liste os tipos distintos de status das encomendas (tabela ORDERS).<p>
+Detalhe: mostre somente o tipo distinto de status da encomenda sem ordenar os dados</p><p>
+Arquivo: q4_tipo_encomendas.sql</p><p>
+
+</p><h4>Q5 Liste os países que mais realizaram encomendas:</h4>
+Objetivo: liste os países e a quantidade de encomendas de cada país.<p>
+Detalhe: mostre o nome do país e sua quantidade de encomendas ordenada de forma decrescente pela quantidade.</p><p>
+Arquivo: q5_qtd_encomendas.sql</p><p>
+
+</p><h4>Q6 Liste a quantidade de itens encomendados pelos países (somente os TOP 10):</h4>
+Objetivo: liste os países e a quantidade de itens de cada país.<p>
+Detalhe: mostre o nome do país e sua quantidade de itens encomendados ordenada de forma decrescente pela quantidade. Mostre somente os 10 países que mais possuem itens.</p><p>
+Arquivo: q6_qtd_itens.sql</p><p>
+
+</p><h4>Q7 Liste a quantidade de itens encomendados pelos países com mais de 62000 itens :</h4>
+Objetivo: liste os países e a quantidade de itens de cada país.<p>
+Detalhe: mostre o nome do país e sua quantidade de itens encomendados ordenada de forma decrescente pela quantidade. Mostre somente os países que possuem mais de 62.000 de itens encomendados.</p><p>
+Arquivo: q7_qtd_itens_maior.sql</p><p>
+
+</p><h4>Q8 Quantidade de clientes que podem ter realizado uma ordem de compra (não fizeram obrigatóriamente):</h4>
+Objetivo: contar os clientes que fizeram ordem de compra mas que não tem 'special request' juntamente com os clientes que não fizeram ordem de compra. Portanto, os clientes que fizeram ordem de compra não podem ter no comentário de compra O_COMMENT o string 'special request'.<p>
+Detalhe: mostre somente a quantidade dos clientes
+Arquivo: q8_not_special.sql</p><p>
+
+
+
+
+</p></body></html>
